@@ -1,0 +1,8 @@
+---
+title: "index"
+author: "Alex Neidermeier"
+date: "1/17/2018"
+output: html_document
+---
+
+##Alex Neidermeier's Bio 381 Webpage##
