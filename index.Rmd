@@ -1,8 +1,9 @@
 ---
-title: "index"
+title: "Alex Neidermeier's Bio 381 Webpage"
 author: "Alex Neidermeier"
 date: "1/17/2018"
-output: html_document
+output: prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
 ---
 
-##Alex Neidermeier's Bio 381 Webpage##
