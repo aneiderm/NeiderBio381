@@ -1,13 +1,16 @@
 ---
 title: "Alex Neidermeier's Bio 381 Webpage"
-author: "Alex Neidermeier"
-date: "1/17/2018"
+date: "Rubenstein School of Environment and Natural Resources"
+author: 
 output: 
-prettydoc::html_pretty:
-    theme: leonids
+  prettydoc::html_pretty:
+    theme: "cayman"
     highlight: github
 ---
 
 <p align="center">
+Contact: aneiderm@uvm.edu
 
 <img src="Zoltar.jpeg" width="200" height="200" />
+
+* [RMarkdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) 
