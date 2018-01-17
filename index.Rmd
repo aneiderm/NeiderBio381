@@ -2,8 +2,10 @@
 title: "Alex Neidermeier's Bio 381 Webpage"
 author: "Alex Neidermeier"
 date: "1/17/2018"
-output: prettydoc::html_pretty:
+output: 
+prettydoc::html_pretty:
     theme: leonids
     highlight: github
 ---
 
+<p align="center">
