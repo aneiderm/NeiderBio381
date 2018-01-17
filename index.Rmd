@@ -9,3 +9,5 @@ prettydoc::html_pretty:
 ---
 
 <p align="center">
+
+<img src="Zoltar.jpeg" width="200" height="200" />
