@@ -17,3 +17,5 @@ Contact: aneiderm@uvm.edu
 
 ###Homework
 * [HW Wk 2: Biocontrol Diagram and Silver Fly Diagram](Graphs_for_wk_2.html)
+
+* [HW Wk 3: Beamer Preesentation: Determining the Phenology of Silver Fly (Leucopis spp.) on Hemlock Woolly Adelgid (Adelges tsugae) in the Eastern US](PractivePresentation.pdf)
