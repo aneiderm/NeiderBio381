@@ -16,4 +16,4 @@ Contact: aneiderm@uvm.edu
 * [RMarkdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) 
 
 ###Homework
-* [HW Wk 2: Diagram](Graphs_for_wk_2.html)
+* [HW Wk 2: Biocontrol Diagram and Silver Fly Diagram](Graphs_for_wk_2.html)

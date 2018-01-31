@@ -1,4 +1,4 @@
-Merit of the Silver Fly as a Biological Control Agent of the Hemlock Woolly Adelgid (HWA)
+
 ```mermaid
 graph LR %%LR means left, TD means top down
 A((Merit as a Biocontrol of HWA)) 
