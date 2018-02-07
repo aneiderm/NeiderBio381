@@ -1,0 +1,177 @@
+---
+title: "CompBio_HW4"
+author: "Alex Neidermeier"
+date: "2/7/2018"
+output: 
+  html_document: 
+    self_contained: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Suppose x = 1.1, a = 2.2, and b = 3.3. Assign each expression to the value of the variable zand print the value stored in z.
+a. x^a^b
+```{r}
+x=1.1
+a=2.2
+b=3.3
+z <- x^(a^b)
+z
+```
+
+b.(x^a)^b
+```{r}
+z=(x^a)^b
+z
+```
+
+c. 3x^3+2x^2+1
+```{r}
+z=3*x^3+2*x^2+1
+z
+```
+
+d. The digit in the second place of z (hint: use floor() and/or &&)
+```{r}
+?floor
+floor((z %% floor(z)*10))
+
+```
+
+2. Using the rep and seq functions, create the following vectors:
+a. (1,2,3,4,5,6,7,8,7,6,5,4,3,2,1)
+```{r}
+z=c(seq(1:8),(7:1))
+z
+```
+
+b. (1,2,2,3,3,3,4,4,4,4,5,5,5,5,5)
+```{r}
+myVec=seq(1:5)
+rep(myVec,myVec)
+
+```
+
+c. (5,4,4,3,3,3,2,2,2,2,1,1,1,1,1)
+```{r}
+newVec=5:1
+rep(newVec,1:5)
+```
+
+3. Create a vector of two random uniform numbers. In a spatial map, these can be interpreted as x and y coordinates that give the location of an individual (such as a marked forest tree in a plot that has been mapped). Using one of R’s inverse trigonometry functions (asin(), acos(), or atan()), convert these numbers into polar coordinates (If you don’t know what polar coordinates are, read about them on the web or in your calculus textbook).
+```{r}
+CartCoords <- runif(2)
+args(asin)
+?asin
+r <- sqrt(CartCoords[1]^2+CartCoords[2]^2)
+theta=atan(CartCoords[2]/CartCoords[1])
+PolCoords=c(r,theta)
+PolCoords
+```
+
+1.Suppose that queue <- c("sheep", "fox", "owl", "ant") and that queue represents the animals that are lined up to enter Noah’s Ark, with the sheep at the front of the line. Using R expressions, update the queue successively as
+
+a. the serpent arrives;
+```{r}
+queue <- c("sheep", "fox", "owl", "ant")
+queue[5] <- "serpent"
+queue
+
+```
+
+b. the sheep enters the ark;
+```{r}
+queue <- queue[-1]
+queue
+```
+
+c. the donkey arrives and talks his way to the front of the line;
+```{r}
+queue <- c("Donkey",queue)
+queue
+```
+
+
+d. the serpent gets impatient and leaves;
+```{r}
+queue <- queue[-5]
+queue
+```
+
+e. the owl gets bored and leaves;
+```{r}
+queue <- queue[-3]
+queue
+```
+
+f. the aphid arrives and the ant invites him to cut in line.
+```{r}
+queue <- c(queue[1],queue[2],"aphid",queue[3])
+queue
+```
+
+g. Finally, determine the position of the aphid in the line.
+```{r}
+queue=="aphid"
+
+```
+
+5. Use R to create a vector of all of the integers from 1 to 100 that are not divisible by 2, 3, or 7.
+
+```{r}
+DivVec <- 1:100
+NotDiv <- DivVec[DivVec %%2 !=0 & DivVec%%3 !=0 & DivVec%%7 !=0]
+NotDiv
+
+```
+
+6. Create a vector z of 1000 random uniform numbers.
+a. create a vector that contains 3 numbers: the proportion of the numbers in z that are less than 0.10, greater than 0.90, and between 0.45 and 0.55.
+```{r}
+z <- runif(1000)
+y <- z[z>.45]
+Unicorn <- c((sum(z<.1)/1000),(sum(z>.9)/1000),(sum(y<.55)/1000))
+Unicorn
+```
+
+b. Making successive copies of z, transform your vector of uniform numbers in the following ways:
+log (base 10) of z
+z2
+ez
+square root of z
+```{r}
+z1 <- log10(z)
+z1
+z2 <- z^2
+z2
+z3 <- exp(z)
+z3
+z4 <- sqrt(z)
+z4
+```
+
+c. for each case calculate your vector of 3 numbers to get the new proportions.
+```{r}
+z1 <- log10(z)
+y1 <- z1[z1>.45]
+Unicorn1 <- c((sum(z1<.1)/1000),(sum(z1>.9)/1000),(sum(y1<.55)/1000))
+Unicorn1
+
+z2 <- z^2
+y2 <- z2[z2>.45]
+Unicorn2 <- c((sum(z2<.1)/1000),(sum(z2>.9)/1000),(sum(y2<.55)/1000))
+Unicorn2
+
+z3 <- exp(z)
+y3 <- z3[z3>.45]
+Unicorn3 <- c((sum(z3<.1)/1000),(sum(z3>.9)/1000),(sum(y3<.55)/1000))
+Unicorn3
+
+z4 <- sqrt(z)
+y4 <- z4[z4>.45]
+Unicorn4 <- c((sum(z4<.1)/1000),(sum(z4>.9)/1000),(sum(y4<.55)/1000))
+Unicorn4
+```
+
