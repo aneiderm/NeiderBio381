@@ -25,3 +25,5 @@ Contact: aneiderm@uvm.edu
 * [Hw Wk 5: BB Text-Regular Expressions](HW_5.html)
     
     Good for fixing up junky datasets 
+    
+* [Hw Wk 6: Distributions and simulations](HW6.html)

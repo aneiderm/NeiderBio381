@@ -1,0 +1,165 @@
+---
+title: "HW 6"
+author: "Alex Neidermeier"
+date: "2/21/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# how to compare a histogram of continuous (or integer) data to the probability density functions for different statistical distributions.
+```
+
+```{r}
+library(ggplot2) # for graphics
+library(MASS) # for maximum likelihood estimation
+library(fitdistrplus)
+```
+
+**Some made up data here**
+```{r}
+z <- rnorm(n=3000,mean=0.2)
+z <- data.frame(1:3000,z)
+names(z) <- list("ID","myVar")
+z <- z[z$myVar>0,]
+str(z)
+
+```
+
+###**Reading in my actual data (Branch weight)**
+```{r}
+z <- read.table("BranchWt.csv",header=FALSE,sep=",", stringsAsFactors=FALSE)
+
+str(z)
+summary(z)
+names(z) <- list("ID","myVar")
+z <- z[z$myVar>0,]
+str(z)
+View(z)
+
+```
+
+
+**Plot histogram of data**
+
+```{r}
+p1 <- ggplot(data=z, aes(x=myVar, y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+print(p1)
+```
+
+**Add empirical curve**
+```{r}
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+```
+
+**Get _maximum likelihood parameters_ for normal**
+```{r}
+normPars <- fitdistr(z$myVar,"normal")
+print(normPars)
+str(normPars)
+normPars$estimate["mean"] # note structure of getting a named attribute
+```
+
+###**Plot normal probability density**
+```{r}
+meanML <- normPars$estimate["mean"]
+sdML <- normPars$estimate["sd"]
+
+xval <- seq(0,max(z$myVar),len=length(z$myVar))
+
+ stat <- stat_function(aes(x = xval, y = ..y..), fun = dnorm, colour="red", n = length(z$myVar), args = list(mean = meanML, sd = sdML))
+ p1 + stat
+```
+
+###**Plot exponential probability density**
+```{r}
+expoPars <- fitdistr(z$myVar,"exponential")
+rateML <- expoPars$estimate["rate"]
+
+stat2 <- stat_function(aes(x = xval, y = ..y..), fun = dexp, colour="blue", n = length(z$myVar), args = list(rate=rateML))
+ p1 + stat + stat2
+```
+
+###**Plot uniform probability density**
+```{r}
+stat3 <- stat_function(aes(x = xval, y = ..y..), fun = dunif, colour="darkgreen", n = length(z$myVar), args = list(min=min(z$myVar), max=max(z$myVar)))
+ p1 + stat + stat2 + stat3
+```
+
+###**Plot gamma probability density**
+```{r}
+gammaPars <- fitdistr(z$myVar,"gamma")
+shapeML <- gammaPars$estimate["shape"]
+rateML <- gammaPars$estimate["rate"]
+
+stat4 <- stat_function(aes(x = xval, y = ..y..), fun = dgamma, colour="purple", n = length(z$myVar), args = list(shape=shapeML, rate=rateML))
+ p1 + stat + stat2 + stat3 + stat4
+```
+
+
+###**Plot beta probability density**
+```{r}
+pSpecial <- ggplot(data=z, aes(x=myVar/(max(myVar + 0.1)), y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+betaPars <- fitdistr(x=z$myVar/max(z$myVar + 0.1),start=list(shape1=1,shape2=2),"beta")
+shape1ML <- betaPars$estimate["shape1"]
+shape2ML <- betaPars$estimate["shape2"]
+
+statSpecial <- stat_function(aes(x = xval, y = ..y..), fun = dbeta, colour="orchid", n = length(z$myVar), args = list(shape1=shape1ML,shape2=shape2ML))
+pSpecial + statSpecial
+?stat_function  # superimpose a function on top of an existing plot.
+```
+
+##**Comparing log likelihoods**
+*high log likelihoods are 'best'*
+```{r}
+normPars$loglik 
+gammaPars$loglik
+expoPars$loglik
+
+```
+
+
+##**Comparing AICs with another package**
+*small AICs are the 'best' models*
+*AIC= -2(log-likelihood) + 2K*
+```{r}
+fit.norm <- fitdist(z$myVar,"norm")
+fit.norm$aic
+
+fit.gamma <- fitdist(z$myVar,"gamma")
+fit.gamma$aic
+
+```
+
+# Best-Fitting distribution: GAMMA 
+```{r}
+p1 <- ggplot(data=z, aes(x=myVar, y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+print(p1)
+
+#Here's my gamma simulation data plotted
+GammaSim1 <- rgamma(n=47,shape = shapeML,rate = rateML)
+GammaSim1 <- as.data.frame(GammaSim1)
+GS1 <- ggplot(data=GammaSim1, aes(x=GammaSim1, y=..density..)) + geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+print(GS1)
+
+# My real data with the gamma line
+p1 <- ggplot(data=z, aes(x=myVar, y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+p1 + stat4
+
+#To add the gamma line on my simulated gamma data
+GS1 + stat4
+
+```
+
+*My actual data has a big spike in the middle.  As these are tree branch weights, it's possible that this branch was just much larger.  It could also be due to measurement error.  In either case, running another gamma distribution might return different results and are of course computer generated.  Another run could produce results that are more simular.*
