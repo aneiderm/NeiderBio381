@@ -31,7 +31,7 @@ str(z)
 
 ###**Reading in my actual data (Branch weight)**
 ```{r}
-z <- read.table("BranchWt.csv",header=FALSE,sep=",", stringsAsFactors=FALSE)
+z <- read.table("BranchWt.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
 
 str(z)
 summary(z)
@@ -163,3 +163,5 @@ GS1 + stat4
 ```
 
 *My actual data has a big spike in the middle.  As these are tree branch weights, it's possible that this branch was just much larger.  It could also be due to measurement error.  In either case, running another gamma distribution might return different results and are of course computer generated.  Another run could produce results that are more simular.*
+
+

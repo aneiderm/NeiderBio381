@@ -1,0 +1,167 @@
+---
+title: "HW 6: Creating Fake Data Sets To Explore Hypotheses"
+author: "Alex Neidermeier"
+date: "2/28/2018"
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(reshape2)
+```
+
+##Simulated Leucopis Data##
+
+###Take 1###
+*Creating a results matrix
+```{r}
+resultsMatrix <- matrix(NA,1,1)
+colnames(resultsMatrix) <- list("P value")
+#print(resultsMatrix)
+
+```
+
+*Experiment 1:*
+Counting the number of leucopis flies and temperature which are both continuous variables
+
+* Hypothesis: The insect population will come to a peak and then fall
+
+* 2. Analysis type: Regression
+
+* 3. Data simulation:
+```{r}
+#LPSF= Leucopis Population Simulation Function
+#Produces a table of rnorm Temperatures and Populations
+LPSF1 <- function(TempMean=10,PopsMean=20,n=50,sd1=1,sd2=3){
+  Exp1 <- data.frame(Temps=rnorm(mean=TempMean,n=n,sd=sd1),Pops=rnorm(mean=PopsMean,n=n,sd=sd2))
+  return(Exp1)
+}  
+#Exp1 is my first sample set
+Exp1 <- LPSF1(TempMean = 15)
+head(Exp1)
+
+
+```
+
+* 4. Function:
+```{r}
+#LMA means linear model analysis
+#Sample size: 
+LMA1 <- function(data=Exp1){
+  Results1 <- lm(Temps~Pops,data = data)
+  return(summary(Results1)$coefficients)
+}
+z1 <- LMA1()
+#This gives you just the p-value.  Need to find a way to get this into my results matrix w/ 
+z1[2,4] <- resultsMatrix
+```
+
+* 4. Plot:
+```{r}
+#This is a function to plot the results of my linear model
+RegPlotF <- function(data=Exp1){
+  Exp1Plot <- ggplot(data = data, aes(x=Temps,y=Pops))+ geom_point()+ stat_smooth(method = lm, se=0.99)
+  print(Exp1Plot)
+}
+RegPlotF()
+
+```
+
+5. Rerunning three times:
+*1. 
+```{r}
+Exp1 <- LPSF1()
+z <- LMA1()
+z[2,4]
+RegPlotF()
+
+```
+2. 
+```{r}
+Exp1 <- LPSF1()
+z2 <- LMA1()
+resultsMatrix <- rbind(z2[2,4])
+RegPlotF()
+
+```
+3.
+```{r}
+Exp1 <- LPSF1()
+z3 <- LMA1()
+resultsMatrix <- rbind(z3[2,4])
+RegPlotF()
+
+```
+
+#####6. Adjusting means of groups#####
+* Changing the temperature mean
+```{r}
+Exp1 <- LPSF1(TempMean = 15)
+z4 <- LMA1()
+resultsMatrix <- cbind(z4[2,4])
+RegPlotF()
+#resultsMatrix[1,] <- 
+```
+* Changing the population mean
+```{r}
+Exp1 <- LPSF1(PopsMean = 25)
+z5 <- LMA1()
+resultsMatrix <- cbind(z5[2,4])
+RegPlotF()
+
+```
+* Changing the sample size
+```{r}
+Exp1 <- LPSF1(n = 15)
+z6 <- LMA1()
+resultsMatrix <- cbind(z6[2,4])
+RegPlotF()
+
+```
+
+* Changing the sample size again, controlling all parameters
+```{r}
+Exp1 <- LPSF1(TempMean = 15, PopsMean = 15, sd1 = 1, sd2=1, n = 1500)
+z7 <- LMA1(Exp1)
+resultsMatrix <- cbind(z7[2,4])
+RegPlotF()
+
+print(resultsMatrix)
+```
+None of these experiments have consistant p-values due to the randomness generated using the rnorm function in the original data simulation script.
+
+
+
+
+###Take 2###
+Generating the data differently
+```{r} 
+#LPSF= Leucopis Population Simulation Function
+#Produces a table of rnorm Temperatures and Populations
+#Runs a linear model
+#Creates a ggplot with a smoother
+#Returns the data, slope, and p-values
+LPSF2 <-function(n=50){
+  x=rnorm(n,mean = 18, sd=2)
+  noise <- runif(n,-20,20)
+  y=5*x+noise
+  Exp2 <- data.frame(x,y)
+  myMod <- lm(y~x) #fits model
+  myOut <- c(slope=summary(myMod)$coefficients[2,1],pval=summary(myMod)$coefficients[2,4])
+  plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)
+  print(plotVar)
+  return(myOut)
+
+}
+LPSF2()
+LPSF2(200)
+LPSF2(10)
+LPSF2(5)
+```
+
+Now I can have a pretty small n and still have a good p value since the model is pretty tight and the noise isn't very strong.
+x in this scenario is temperature and y is population

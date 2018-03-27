@@ -1,0 +1,111 @@
+---
+title: "HW 9: Organizing Code With Structured Programming"
+author: "Alex Neidermeier"
+date: "3/21/2018"
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(reshape2)
+
+resultsMatrix <- matrix(NA,1,1)
+colnames(resultsMatrix) <- list("P value")
+
+# FIRST FUNCTION ---------------------------------------------------------------
+#FUNCTION: LPSF2. LPSF= Leucopis Population Simulation Function
+#Produces a table of rnorm Temperatures and Populations
+#Runs a linear model
+#Creates a ggplot with a smoother
+#Returns the plot, slope, and p-values
+#input: n (sample size)
+#output: Plot w/ smoother, slope, and p-value
+#_________________________________________________________
+LPSF2 <-function(n=50){
+  x=rnorm(n,mean = 18, sd=2) # x= temperature
+  noise <- runif(n,-20,20)
+  y=5*x+noise # y= resulting leucopis pop
+  Exp2 <- data.frame(x,y)
+  myMod <- lm(y~x) #fits model
+  myOut <- c(slope=summary(myMod)$coefficients[2,1],pval=summary(myMod)$coefficients[2,4])
+  plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)
+  print(plotVar)
+  return(myOut)
+}
+
+# SECOND FUNCTION ---------------------------------------------------------------
+#FUNCTION: LPSF3. LPSF= Leucopis Population Simulation Function
+#Produces a table of rnorm Temperatures and Populations
+#Runs a linear model
+#Creates a ggplot with a smoother
+#Returns the plot, slope, and p-values
+#input: n (sample size), temperature
+#output: Plot w/ smoother, print slope & p-value
+#_________________________________________________________
+LPSF3 <-function(n=50,mean=18){ #n=sample size, mean= mean daily temp during study period)
+  x=seq_len(n)+rnorm(n, mean, sd=2) # x= temperature
+  noise <- runif(n,-20,20)
+  y=5*x+noise # y= resulting leucopis pop
+  Exp2 <- data.frame(x,y)
+  myMod <- lm(y~x) #fits model
+  myOut <- c(slope=summary(myMod)$coefficients[2,1],pval=summary(myMod)$coefficients[2,4])
+  plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)
+  print(plotVar)
+  return(myOut)
+}
+# test 
+LPSF3()
+
+
+# SECOND FUNCTION ---------------------------------------------------------------
+#FUNCTION: LPSF3. LPSF= Leucopis Population Simulation Function
+#Produces a table of rnorm Temperatures and Populations
+#Runs a linear model
+#Creates a ggplot with a smoother
+#Returns the plot, slope, and p-values
+#input: n (sample size), temperature
+#output: Plot w/ smoother (+axis names), print slope & p-value
+#_________________________________________________________
+LPSF4 <-function(n=50,mean=18){ #n=sample size, mean= mean daily temp during study period)
+  x=seq_len(n)+rnorm(n, mean, sd=2) # x= temperature
+  noise <- runif(n,-20,20)
+  y=5*x+noise # y= resulting leucopis pop
+  Exp2 <- data.frame(x,y)
+  myMod <- lm(y~x) #fits model
+  myOut <- c(slope=summary(myMod)$coefficients[2,1],pval=summary(myMod)$coefficients[2,4])
+  plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)+xlab("Temperature")+ylab("Population")+ ggtitle("Leucopis populations")+theme_minimal()
+  #print(plotVar)
+  x=(cat(n,mean,myOut))
+  return(x)
+}
+# test 
+q <- LPSF4()
+
+
+
+# Create a loop that places the sample size, mean temp, slope and p value in a dataframe. First 2 different mean temps, sample size 1:5 two times.
+
+Results <- matrix(nrow=10,ncol=4)
+colnames(Results)=c("Sample Size","Mean Temp","Slope","P-Value")
+#Results <- as.data.frame(Results)
+
+#View(Results)
+
+for(i in 1:10){
+  temp <- LPSF4()
+  Results[i,]=temp
+}
+
+temp <- LPSF4()
+Results[,1]=temp[,1:4]
+```
+
+```{r}
+
+```
+
+?ggplot
