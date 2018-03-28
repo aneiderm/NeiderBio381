@@ -1,5 +1,5 @@
 ---
-title: "Graphs for wk 2"
+title: "Concept Mapping: *Leucopis* spp., a predator of Hemlock Woolly Adelgid"
 author: "Alex Neidermeier"
 date: "1/24/2018"
 output: 
@@ -10,5 +10,11 @@ output:
 
 [HW 2: HWA Biocontrol Decision tree](Biocontrol Merit Diagram.html)
 
+This diagram outlines the decision process for choosing an appropriate predator for the hemlock woolly adelgid.  This decision tree informs the experimental design outlined below.
+
 
 [HW 2: Experimental Design for 2018 *Leucopis* spp. project](Experimental Design Leucopis spp.html)
+
+In this experiment, we are looking at the development of Leucopis spp. and their ability to reduce Hemlock Woolly Adelgid population numbers. 
+Our hypothesis is that *Leucopis* spp. populations will be inversely correlated with that of HWA.
+
