@@ -2,10 +2,13 @@
 title: "Graphs for wk 2"
 author: "Alex Neidermeier"
 date: "1/24/2018"
-output: html_document
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+    highlight: github
 ---
 
 [HW 2: HWA Biocontrol Decision tree](Biocontrol Merit Diagram.html)
 
 
-![HW 2: Silver Fly Success](SilverFlyConcept.png)
+[HW 2: Experimental Design for 2018 *Leucopis* spp. project](Experimental Design Leucopis spp.html)

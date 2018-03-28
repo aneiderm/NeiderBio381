@@ -10,7 +10,7 @@ A-->C((Survival Abilities))
 	C-->I(Overwintering?)
 	C-->J(Eastern US Ecosys?)
 A-->D((Other Eco. Effects))
-    D --> E(Displace other biocontrol?)
+    D --> E(Displaces other predators?)
     D -->|YES| K[Other natives?]
     D --> L[Species mixing?]
 
