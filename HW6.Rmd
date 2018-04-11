@@ -2,9 +2,11 @@
 title: "HW 6"
 author: "Alex Neidermeier"
 date: "2/21/2018"
-output: html_document
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+    highlight: github
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -142,7 +144,7 @@ fit.gamma$aic
 
 # Best-Fitting distribution: GAMMA 
 ```{r}
-p1 <- ggplot(data=z, aes(x=myVar, y=..density..)) +
+p1 <- ggplot(data=z, aes(x=myVar, y=density)) +
   geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
 print(p1)
 

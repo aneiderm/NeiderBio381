@@ -1,0 +1,100 @@
+---
+title: 'HW 11: Function plotting and randomization tests'
+author: "Alex Neidermeier"
+date: "4/4/2018"
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+    highlight: github
+---
+#Problem 1:
+* Calculating Growing Degree Days for *Leucopis* spp. 
+
+```{r}
+library(ggplot2)
+library(fitdistrplus)
+######################################################
+# FUNCTION: HLT  ---------------------------------------------------
+# Generates random high and low temps for a specified number of days
+# input:  n = number of days 
+#         
+# output: S = vector of species richness
+#----------------------------------------------------
+HLT <- function(n=7*9, meantemp=15){
+  HTemps <- data.frame(rnorm(n=n,mean=meantemp+5,sd=2.5))
+  LTemps <- data.frame(rnorm(n=n,mean=meantemp-5,sd=1.5))
+  TempsDF <- data.frame(c(HTemps,LTemps))
+  return(TempsDF)
+}
+
+
+######################################################
+# FUNCTION: GDD ---------------------------------------------------
+# Determines growing degrees days for silver fly spp
+# input:  DMax  =   Daily Maximum Temperatures
+#         DMin  =   Daily Minimum Temperatures 
+#         BLine =   Baseline temperature
+# output:   DD  =   Degree day value
+#----------------------------------------------------
+GDD <- function(DMax=18,
+                DMin=10,
+                BLine=11){
+  DD <- ((DMax+DMin)/2)-BLine
+  return(DD)
+}
+
+#GDD()
+```
+
+
+### Main Body of Code
+1.  Get degree days. df has my high low temps
+
+```{r}
+df <- HLT()
+# Loop to run GDD function over degree data
+for(i in 1:nrow(df)){
+  for(j in 2:nrow(df)){
+  df[i,3] <- GDD(DMax = df[i,1],DMin = df[i,2])
+  }
+  df[1,4] <- df[1,3]
+  #df[j,4] <- df[(j-1),4]+df[j,3]
+}
+
+for(j in 2:nrow(df)){
+  df[j,4] <- df[(j-1),4]+df[j,3]  
+}
+```
+
+2.  Plot degree days at three sites on one graph NOT FINISHED
+
+```{r}
+cPars <- c(15,18,22)
+p1 <- ggplot(data = df)
+p1 + geom_line(mapping = aes(x=1:length(df), y=df$V4)) 
+
+```
+
+
+##Problem 2
+```{r}
+library(TeachingDemos)
+char2seed("Cruel April")
+
+
+######################################################
+# FUNCTION: readData
+# Read in or generate data frame
+# input: file name (or nothing for demo)
+# output: 3-column data frame of observed data (ID, x, y)
+#-----------------------------------------------------
+
+readData <- function(z=NULL){
+    NdF <- read.table(z,header=TRUE,sep=",", stringsAsFactors=FALSE)
+    NdF <- as.data.frame(NdF)
+    return(NdF)
+  }
+#readData(z="BranchWt.csv")
+
+```
+

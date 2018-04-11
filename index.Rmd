@@ -32,4 +32,10 @@ Contact: aneiderm@uvm.edu
 
 * [Hw 7/8: Creating Fake Data Sets to Explore Hypotheses](HW7.html)
 
-* [HW 9: Creating Batch Files](HW10_1.html) 
+* [HW 9: Organizing Code With Structured programming](HW9.html)
+
+* [HW 10: Creating Batch Files](HW10_1.html) 
+
+* [HW 11: Function plotting and randomization tests]
+
+* [HW 12: ggplot fun!]

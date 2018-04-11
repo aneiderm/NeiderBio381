@@ -7,14 +7,12 @@ output:
     theme: "cayman"
     highlight: github
 ---
+This homework is a revision of HW 7/8 but using structured programming.
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(reshape2)
-
-resultsMatrix <- matrix(NA,1,1)
-colnames(resultsMatrix) <- list("P value")
 
 # FIRST FUNCTION ---------------------------------------------------------------
 #FUNCTION: LPSF2. LPSF= Leucopis Population Simulation Function
@@ -36,8 +34,10 @@ LPSF2 <-function(n=50){
   print(plotVar)
   return(myOut)
 }
+#LPSF2()
 
 # SECOND FUNCTION ---------------------------------------------------------------
+#Basically a differnt way of producing the same kind of data as in LPSF2
 #FUNCTION: LPSF3. LPSF= Leucopis Population Simulation Function
 #Produces a table of rnorm Temperatures and Populations
 #Runs a linear model
@@ -58,11 +58,12 @@ LPSF3 <-function(n=50,mean=18){ #n=sample size, mean= mean daily temp during stu
   return(myOut)
 }
 # test 
-LPSF3()
+#LPSF3()
+#r <- LPSF3()
+#r
 
-
-# SECOND FUNCTION ---------------------------------------------------------------
-#FUNCTION: LPSF3. LPSF= Leucopis Population Simulation Function
+# Third FUNCTION ---------------------------------------------------------------
+#FUNCTION: LPSF4. LPSF= Leucopis Population Simulation Function
 #Produces a table of rnorm Temperatures and Populations
 #Runs a linear model
 #Creates a ggplot with a smoother
@@ -79,33 +80,28 @@ LPSF4 <-function(n=50,mean=18){ #n=sample size, mean= mean daily temp during stu
   myOut <- c(slope=summary(myMod)$coefficients[2,1],pval=summary(myMod)$coefficients[2,4])
   plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)+xlab("Temperature")+ylab("Population")+ ggtitle("Leucopis populations")+theme_minimal()
   #print(plotVar)
-  x=(cat(n,mean,myOut))
-  return(x)
+  #x=(cat(n,mean,myOut))
+  return(c(n,mean,myOut))
 }
 # test 
-q <- LPSF4()
-
-
+#q <- LPSF4()
+#q
 
 # Create a loop that places the sample size, mean temp, slope and p value in a dataframe. First 2 different mean temps, sample size 1:5 two times.
-
-Results <- matrix(nrow=10,ncol=4)
+Results <- matrix(nrow=20,ncol=4)
 colnames(Results)=c("Sample Size","Mean Temp","Slope","P-Value")
 #Results <- as.data.frame(Results)
 
 #View(Results)
-
 for(i in 1:10){
   temp <- LPSF4()
   Results[i,]=temp
 }
+for(i in 10:20){
+  temp <- LPSF4(100)
+  Results[i,]=temp
+}
 
-temp <- LPSF4()
-Results[,1]=temp[,1:4]
+print(Results)
 ```
 
-```{r}
-
-```
-
-?ggplot
