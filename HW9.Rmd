@@ -81,7 +81,7 @@ LPSF4 <-function(n=50,mean=18){ #n=sample size, mean= mean daily temp during stu
   plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)+xlab("Temperature")+ylab("Population")+ ggtitle("Leucopis populations")+theme_minimal()
   #print(plotVar)
   #x=(cat(n,mean,myOut))
-  return(c(n,mean,myOut))
+  #return(c(n,mean,myOut))
 }
 # test 
 #q <- LPSF4()

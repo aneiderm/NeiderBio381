@@ -1,0 +1,97 @@
+---
+title: 'HW 12: ggplot time!'
+author: "Alex Neidermeier"
+date: "4/11/2018"
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+    highlight: github
+---
+#Function plotting and randomization tests#
+* Make my life cycle analysis bar graph in R
+* Then do facets of each part of life cycle over four weeks
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(patchwork)
+
+z <- read.table("FY17LeucopisPops.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
+str(z)
+fl <- z[,2:5]
+str(fl)
+
+#transposing the rows and columns in fl dataset
+fl <- t(fl)
+as.data.frame(fl)
+
+
+p1 <- ggplot(fl$Larvae,aes(class))
+  geom_bar(mapping = NULL,data = fl,stat = "count",position = "stack",width = NULL,binwidth = NULL, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+print(p1)
+
+
+#think i need the rows to be the x axis (time)
+p1 <- ggplot(data = fl,mapping = aes(x=Larvae))+geom_bar(position ="dodge",color="black")
+print(p1)
+
+# transposed the data in excel
+trans <- read.table("FY17LeucopisPops_transposed.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
+str(trans)
+
+p1 <- ggplot(data = trans,mapping = aes(x=X6.14))+ geom_bar(color="black", fill= "goldenrod")
+print(p1)
+
+
+#At least have the dates on the x axis here
+p1 <- ggplot(data = z,mapping = aes(x=z$Dates))+ geom_bar(color="black", fill="goldenrod")
+print(p1)
+
+p1 <- ggplot(data = z,mapping = aes(x=Dates))+ geom_bar(position="stack",color="black", fill="goldenrod")
+print(p1)
+
+
+#trying to use geom_col instead
+# At least get the larvae plotted correctly here!
+p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae))
+print(p1)
+
+# Doesn't work--wrong AES length
+p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae,position_dodge()))
+print(p1)
+
+# also not working...
+p1 <- ggplot(data = z,mapping = aes(x=dates, y=Larvae))+geom_bar(stat = "identity",position="stack",color="black", fill="goldenrod")
+print(p1)
+
+
+# Trying to get all three columns on one graph
+#Here I think they are stacking within each other? Not working now...
+p1 <- ggplot(data = z,mapping = aes(x=z$dates))+ 
+  geom_bar(mapping = aes(y=z$Larvae),stat = "identity",position="dodge",color="black", fill="goldenrod") 
+print(p1)
+
+p1 <- ggplot(data = z,mapping = aes(x=z$ates))+ geom_bar(data=z, y=z$Larvae, color="black")
+print(p1)
+
+
+#trying to use geom_col instead, take 2
+p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae))
+print(p1)
+
+p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=fl))
+print(p1)
+
+
+  z2 <- read.table("FY17LeucopisPops_transposed.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
+  
+z2
+# no idea what this is plotting
+p1 <- ggplot(data=z2,aes(x=z2$X5.31))+geom_bar()
+print(p1)
+```
+

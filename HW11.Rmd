@@ -21,12 +21,12 @@ library(fitdistrplus)
 # output: S = vector of species richness
 #----------------------------------------------------
 HLT <- function(n=7*9, meantemp=15){
-  HTemps <- data.frame(rnorm(n=n,mean=meantemp+5,sd=2.5))
-  LTemps <- data.frame(rnorm(n=n,mean=meantemp-5,sd=1.5))
-  TempsDF <- data.frame(c(HTemps,LTemps))
+  HTemps <- data.frame(HTemps=rnorm(n=n,mean=meantemp+5,sd=2.5))
+  LTemps <- data.frame(LTemps=rnorm(n=n,mean=meantemp-5,sd=1.5))
+  TempsDF <- data.frame(Htemps=HTemps,Ltemps=LTemps)
   return(TempsDF)
 }
-
+# t <- HLT()
 
 ######################################################
 # FUNCTION: GDD ---------------------------------------------------
@@ -42,59 +42,164 @@ GDD <- function(DMax=18,
   DD <- ((DMax+DMin)/2)-BLine
   return(DD)
 }
+# GDD()
 
-#GDD()
+#FUNCTION: LPSF5. LPSF= Leucopis Population Simulation Function
+#Produces a vector of simulated leucopis Populations from accumulated degree days
+#input: x = accumulated growing degree days 
+#output: Estimate of Leucopis pops 
+#_________________________________________________________
+LPSF5 <-function(x=df$V4){ 
+  noise <- runif(length(x),-20,20)
+  y=10+2*x+noise # y= resulting leucopis pop
+  return(y)
+}
+#y <- LPSF5()
+
+
+#FUNCTION: LPSF6. LPSF= Leucopis Population Simulation Function
+#Produces a vector of simulated leucopis Populations from accumulated degree days
+#Runs a linear model
+#Creates a ggplot with a smoother
+#Returns the plot, slope, and p-values
+#input: x = accumulated growing degree days 
+#output: Plot w/ smoother (+axis names), print slope & p-value
+#_________________________________________________________
+LPSF6 <-function(x,y){ 
+  Exp2 <- data.frame(x,y)
+  myMod <- lm(y~x) #fits model
+  myOut <- c(slope=summary(myMod)$coefficients[2,1],pval=summary(myMod)$coefficients[2,4])
+  plotVar <- ggplot(data = Exp2, aes(x=x,y=y))+ geom_point()+ stat_smooth(method = lm, se=0.99)
+  print(plotVar)
+  return(myOut)
+}
+
+#FUNCTION: LPSF_NP. LPSF= Leucopis Population Simulation Function
+#Produces a vector of simulated leucopis Populations from accumulated degree days
+#Runs a linear model
+#Creates a ggplot with a smoother
+#Returns the plot, slope, and p-values
+#input: x = accumulated growing degree days 
+#output: Plot w/ smoother (+axis names), print slope & p-value
+#_________________________________________________________
+LPSF_NP <-function(x,y){ 
+  Exp2 <- data.frame(x,y)
+  myMod <- lm(y~x) #fits model
+  myOut <- c(slope=summary(myMod)$coefficients[2,1])
+  return(myOut)
+}
+
+
+######################################################
+# FUNCTION: shuffleData
+# randomize data for regression analysis
+# input: Data frame elements, xVar, yVar. SC=shuffle column
+# output: data frame (ID, xVar, yVar) w/ one column shuffled
+#-----------------------------------------------------
+
+shuffleData <- function(z){
+  z <- sample(z)
+  return(z)
+}
+#shuffleData()
+
+```
+
+```{r}
+######################################################
+# FUNCTION: getPVal
+# calculate p value for observed, simulated data
+# input: list of observed metric and vector of simulated metric (list needs to be in same form all the time)
+# output: lower, upper tail probability vector
+#-----------------------------------------------------
+
+getPVal <- function(z=NULL){
+  if(is.null(z)){
+  z <- list(Xobs=runif(1),Xsim=runif(1000))}
+  pLower <- mean(z[[2]]<=z[[1]])#have to use dbl bracks for a list
+  pUpper <- mean(z[[2]]>=z[[1]])
+  return(c(pL=pLower,pU=pUpper))
+}
+
+######################################################
+# FUNCTION: plotRanTest
+# calculate p value for observed, simulated data
+# input: list of observed metric and vector of simulated metric (list needs to be in same form all the time)
+# output: lower, upper tail probability vector
+#-----------------------------------------------------
+plotRanTest <- function(z=NULL){
+  if(is.null(z)){ 
+    z <- list(xObs=runif(1),xSim=runif(1000))}
+  dF <- data.frame(ID=seq_along(z[[2]]), simX=z[[2]])
+  p1 <- ggplot(data = dF,mapping=aes(x=simX))
+  p1+ geom_histogram(mapping=aes(fill=I("goldenrod"),color=I("black")))+geom_vline(aes(xintercept=z[[1]],col="blue"))
+}
+
 ```
 
 
 ### Main Body of Code
-1.  Get degree days. df has my high low temps
-
+* Get degree days. df has my high & low temps
 ```{r}
 df <- HLT()
-# Loop to run GDD function over degree data
+# Loop to run GDD function over degree data to get daily increase in degree days
 for(i in 1:nrow(df)){
   for(j in 2:nrow(df)){
   df[i,3] <- GDD(DMax = df[i,1],DMin = df[i,2])
-  }
   df[1,4] <- df[1,3]
-  #df[j,4] <- df[(j-1),4]+df[j,3]
-}
-
-for(j in 2:nrow(df)){
-  df[j,4] <- df[(j-1),4]+df[j,3]  
-}
-```
-
-2.  Plot degree days at three sites on one graph NOT FINISHED
-
-```{r}
-cPars <- c(15,18,22)
-p1 <- ggplot(data = df)
-p1 + geom_line(mapping = aes(x=1:length(df), y=df$V4)) 
-
-```
-
-
-##Problem 2
-```{r}
-library(TeachingDemos)
-char2seed("Cruel April")
-
-
-######################################################
-# FUNCTION: readData
-# Read in or generate data frame
-# input: file name (or nothing for demo)
-# output: 3-column data frame of observed data (ID, x, y)
-#-----------------------------------------------------
-
-readData <- function(z=NULL){
-    NdF <- read.table(z,header=TRUE,sep=",", stringsAsFactors=FALSE)
-    NdF <- as.data.frame(NdF)
-    return(NdF)
+  df[j,4] <- df[(j-1),4]+df[j,3] 
+  df[i,5] <- LPSF5(x=df[i,4])
   }
-#readData(z="BranchWt.csv")
+}
 
 ```
+
+* Plot degree days vs leucopis pops.
+```{r}
+# Feed that into a function that produces a ggplot and gives me the slope and pval
+Xobs <- LPSF6(df$V4,df$V5)
+
+```
+
+
+##Problem 2: Randomization test using shuffling function
+```{r}
+df2 <- HLT()
+# Loop 1
+for(i in 1:nrow(df)){
+  for(j in 2:nrow(df)){
+  df[i,3] <- GDD(DMax = df[i,1],DMin = df[i,2])
+  df[1,4] <- df[1,3]
+  df[j,4] <- df[(j-1),4]+df[j,3] 
+  df[i,5] <- LPSF5(x=df[i,4])
+  }
+}
+
+# Shuffle test
+S <- data.frame(GDD=df$V4,Pop=shuffleData(df$V5))
+
+# Plot,slope, pval of shuffled data
+LPSF6(df$V4,df$V5)
+
+```
+
+* Do 1000 shuffles
+```{r}
+nsim=1000
+Xsim <- vector(length = nsim) # will hold simulated slopes
+
+for(i in seq_len(nsim)){
+  Xsim[i] <- LPSF_NP(df$V4,shuffleData(df$V5))
+}
+
+head(Xsim)
+
+slopes <- list(Xobs[1], Xsim)
+getPVal(slopes)
+
+plotRanTest(slopes)
+
+```
+
+This was a challenging excercise for me to understand conceptually and also to execute (I took two full class periods and then some!).  I'm still not totally clear on why pL and pU from the getPVal function were 1 and 0 respectively--my thought is that my data simulation is probably too tight (ie not enough noise) so it is way to the right of the other simulated slopes.  I think it might make more sense to do this for the pvalues than with the slope.
 

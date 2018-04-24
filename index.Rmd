@@ -7,35 +7,51 @@ output:
     theme: "cayman"
     highlight: github
 ---
-
+###Welcome to my webpage!###
 <p align="center">
-Contact: aneiderm@uvm.edu
-
 <img src="Zoltar.jpeg" width="200" height="200" />
+
+Contact: aneiderm@uvm.edu \
+[LinkedIn](www.linkedin.com/in/alex-neidermeier)
+
+
+###About me:### 
+I am a master's student working with Dr. Kimberly Wallin in the Rubenstein School.  I'm looking at a potential biological control predator for the Hemlock Woolly Adelgid (*A. tsugae*) called the Silver Fly (*Leucopis* spp.)  
+I am also interested in 
 
 
 * [RMarkdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) 
 
-###Homework
-* [HW Wk 2: Biocontrol Diagram and Silver Fly Diagram](Graphs_for_wk_2.html)
-  
+##Homework##
+* [HW Wk 2:](Graphs_for_wk_2.html) \
+  Biocontrol Diagram and Silver Fly Diagram
 
-* [HW Wk 3: Beamer Presentation: Determining the Phenology of Silver Fly (Leucopis spp.) on Hemlock Woolly Adelgid (Adelges tsugae) in the Eastern US](PractivePresentation.pdf)
+* [HW Wk 3:](PractivePresentation.pdf) \
+Beamer Presentation: Determining the Phenology of Silver Fly (Leucopis spp.) on Hemlock Woolly Adelgid (Adelges tsugae) in the Eastern US
 
-* [Hw Wk 4: Coding Extravaganzas](HW4.html)
+* [Hw Wk 4:](HW4.html) \
+ Coding Extravaganzas
 
-* [Hw Wk 5: BB Text-Regular Expressions](HW_5.html)
+* [Hw Wk 5:](HW_5.html)
+     BB Text-Regular Expressions. \
+     Good for fixing up junky datasets 
     
-    Good for fixing up junky datasets 
-    
-* [Hw Wk 6: Distributions and simulations](HW6.html)
+* [Hw Wk 6:](HW6.html) \
+Distributions and simulations
 
-* [Hw 7/8: Creating Fake Data Sets to Explore Hypotheses](HW7.html)
+* [Hw 7/8:](HW7.html) \
+Creating Fake Data Sets to Explore Hypotheses
 
-* [HW 9: Organizing Code With Structured programming](HW9.html)
+* [HW 9:](HW9.html) \
+Organizing Code With Structured programming
 
-* [HW 10: Creating Batch Files](HW10_1.html) 
+* [HW 10:](HW10_1.html) \
+Creating Batch Files
 
-* [HW 11: Function plotting and randomization tests]
+* [HW 11:](HW11.html) \
+Function plotting and randomization tests
 
 * [HW 12: ggplot fun!]
+
+* [DBF File](County boundaries copy/CountyBoundaries.zip)
+

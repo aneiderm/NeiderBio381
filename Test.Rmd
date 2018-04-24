@@ -1,0 +1,30 @@
+---
+title: "Test"
+author: "Alex Neidermeier"
+date: "4/24/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggmap) #automatically loads ggplot as well
+library(rgdal) #automatically loads sp
+library(foreign)
+
+
+# Some example map fetching:
+avl <- get_map(location="Asheville, North Carolina")
+ggmap(avl)
+# Different maptypes: "terrain","toner","watercolor" and lots of others (helpfile)
+# Haven't had luck getting terrain to work
+avl <- get_map(location="Asheville, North Carolina",maptype = "toner")
+ggmap(avl)
+```
+
+
+```{r pressure, echo=FALSE}
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
