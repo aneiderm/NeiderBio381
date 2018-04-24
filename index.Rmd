@@ -53,5 +53,8 @@ Function plotting and randomization tests
 
 * [HW 12: ggplot fun!]
 
-* [DBF File](County boundaries copy/CountyBoundaries.zip)
+* Files for ggmap presentation 
+[County Boundaries Files](County boundaries copy/CountyBoundaries.zip)
+[CSV File with GPS coordinates](GPS_coords.csv)
+[R script for ggmap demo](gg_map_finalscript.R)
 
