@@ -8,8 +8,10 @@
 
 # Preliminaries ---------------------------------------------------------
 library(ggmap) # automatically loads ggplot
-library(rgdal) # automatically loads sp
+library(rgdal) # automatically loads sp (Cheat sheet for sp : http://rspatial.r-forge.r-project.org/gallery/)
+#sp is also used for plotting spatial information
 library(foreign)
+
 
 # Shape file: VT County Boundaries and VT town boundaries which are from http://geodata.vermont.gov/
 
@@ -40,7 +42,6 @@ ggmap(avl)
 
 YD <- get_map(location="Yaounde, Cameroon",source="google", maptype="terrain", zoom = 11)
 ggmap(YD)
-
 
 
 # Vermont example with shapefiles -----------------------------------------
