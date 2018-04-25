@@ -54,41 +54,29 @@ VTMap
 
 # Reading in a VT database file of town boundaries from Vermont Open Geodata Portal (free!)
 # Using the read.dbf function which part of the "forein" package.  Turn a data base file (.dbf) into a dataframe for ggplot.
-head(read.dbf(file="towns/VT_Boundaries__town_polygons.dbf"))
+head(read.dbf(file = "County boundaries copy/VTCountyBoundaries.dbf"))
 
 # readOGR is from rgdal package--turns your data in a usable spatial vector object.
-VTtownB <- readOGR(dsn="towns/VT_Boundaries__town_polygons.shp",layer="VT_Boundaries__town_polygons")
-plot(VTtownB)
-
-# Reproject your data from one projection/ datum to another. Check your metadata.
-VTtownB <- spTransform(VTtownB,CRS("+proj=longlat +datum=WGS84"))
-
-#fortify command (from the package ggplot2).  Converts spatial data into a data frame.
-fortify(VTtownB)
-
-# Plot the shape file on raster object!
-VTtownMap <- VTMap+geom_polygon(data = VTtownB, aes(x=long,y=lat,group=group))
-VTtownMap
-
-# Then you can play with alpha and colors
-VTtownMap <- VTMap+geom_polygon(data = VTtownB, aes(x=long,y=lat,group=group),fill="green",alpha=.5)
-VTtownMap
-
-VTtownMap <- VTMap+geom_polygon(data = VTtownB, aes(x=long,y=lat,group=group),fill="green",alpha=.5,color="brown",size=0.5)
-VTtownMap
-
-
-# Counties (if there’s time) ----------------------------------------------
-# Let's say your interested in counties instead
-head(read.dbf(file = "County boundaries copy/VTCountyBoundaries.dbf"), n=10)
 VTcountyB  <- readOGR(dsn = "County boundaries copy/VTCountyBoundaries.shp", layer = "VTCountyBoundaries")
 plot(VTcountyB)
+
+# Reproject your data from one projection/ datum to another. Check your metadata.
 VTcountyB <- spTransform(VTcountyB, CRS("+proj=longlat +datum=WGS84"))
+
+#fortify command (from the package ggplot2).  Converts spatial data into a data frame.
 fortify(VTcountyB)
 
-# Plot it!
+# Plot the shape file on raster object!
 VTcountyMap <- VTMap + geom_polygon(aes(x=long, y=lat, group=group), fill='green', size=.2,color='black', data=VTcountyB, alpha=0.3)
 VTcountyMap
+
+# Then you can play with alpha and colors
+VTcountyMap <- VTMap+geom_polygon(data = VTcountyB, aes(x=long,y=lat,group=group),fill="green",alpha=.5)
+VTcountyMap
+
+VTcountyMap <- VTMap+geom_polygon(data = VTcountyB, aes(x=long,y=lat,group=group),fill="green",alpha=.2,color="brown",size=0.5)
+VTcountyMap
+
 # From here you can also convey more information by giving results by county (ie populations)
 
 
