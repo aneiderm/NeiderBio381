@@ -56,6 +56,9 @@ Function plotting and randomization tests
 * Files for ggmap presentation \
   [County Boundaries Files](County boundaries copy/CountyBoundaries.zip)\
   [CSV File with GPS coordinates](GPS_coords.csv)\
-  [ggmap demo script](gg_map_finalscript.R)
+  [ggmap demo script](gg_map_finalscript.R)\
+  [ggmap cheat sheet](https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf)\
+  [Vermont Open Geodata Portal](http://geodata.vermont.gov/)\
+  
 
 
