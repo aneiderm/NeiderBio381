@@ -12,86 +12,138 @@ output:
 * Then do facets of each part of life cycle over four weeks
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning=FALSE)
 ```
+
 
 ```{r}
 library(ggplot2)
 library(ggthemes)
 library(patchwork)
+library(tidyr)
+library(wesanderson)
+```
 
+## Initial Tinkering--incorrect data format
+```{r}
 z <- read.table("FY17LeucopisPops.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
 str(z)
 fl <- z[,2:5]
 str(fl)
 
-#transposing the rows and columns in fl dataset
-fl <- t(fl)
-as.data.frame(fl)
-
-
-p1 <- ggplot(fl$Larvae,aes(class))
-  geom_bar(mapping = NULL,data = fl,stat = "count",position = "stack",width = NULL,binwidth = NULL, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
-print(p1)
-
-
-#think i need the rows to be the x axis (time)
-p1 <- ggplot(data = fl,mapping = aes(x=Larvae))+geom_bar(position ="dodge",color="black")
-print(p1)
-
-# transposed the data in excel
-trans <- read.table("FY17LeucopisPops_transposed.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
-str(trans)
-
-p1 <- ggplot(data = trans,mapping = aes(x=X6.14))+ geom_bar(color="black", fill= "goldenrod")
-print(p1)
-
-
 #At least have the dates on the x axis here
 p1 <- ggplot(data = z,mapping = aes(x=z$Dates))+ geom_bar(color="black", fill="goldenrod")
 print(p1)
-
-p1 <- ggplot(data = z,mapping = aes(x=Dates))+ geom_bar(position="stack",color="black", fill="goldenrod")
-print(p1)
-
 
 #trying to use geom_col instead
 # At least get the larvae plotted correctly here!
 p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae))
 print(p1)
 
-# Doesn't work--wrong AES length
-p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae,position_dodge()))
+```
+
+Using the gather function to wrangle my data
+```{r}
+colnames(z)=c("Dates","Parent generation","Larvae","Pupae","F1 Generation")
+. <- gather(z,"Parent generation":"F1 Generation",key = Life_Stage, value = "Abundance")
+print(.)
+
+.$Abundance <- as.numeric(.$Abundance)
+LeuLong <- .
+
+# This works but need to change themes, reorganize legend and title, etc.
+LeuData2 <- LeuLong[order(LeuLong$Dates),]
+LeuBar2 <- ggplot(LeuData2,aes(x=Dates, y=Abundance,fill=Life_Stage, legend(title = "Life Stage")))+
+  geom_bar(position="dodge",stat="identity",color="black")
+LeuBar2
+
+# Different themes
+  LeuBar2 <- LeuBar2+theme_linedraw()
+LeuBar2
+
+# Flipped axes
+LeuBar2 + coord_flip() + theme_grey(base_size = 20, base_family = "Courier")
+
+# With title and fixed axes
+LeuBar2 <- LeuBar2 + ggtitle("Leucopis spp. abundance", subtitle = "New York 2017") +xlab("Collection Dates")+ylab("Leucopis Abundance by life stage")+theme_classic()
+LeuBar2
+
+```
+
+
+##Try making individual graphs and then stacking them \
+
+```{r}
+# Using patchwork to have panels of each life stage 
+p0 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=z$"Parent generation"),fill="black")+ ggtitle("Parent Generation") +xlab("Collection Dates")+ylab("Adult Abundance")+theme_linedraw()
+print(p0)
+
+p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae),fill="pink")+ggtitle("Larvae Abundance") +xlab("Collection Dates")+ylab("Larvae Abundance")+theme_linedraw()
 print(p1)
 
-# also not working...
-p1 <- ggplot(data = z,mapping = aes(x=dates, y=Larvae))+geom_bar(stat = "identity",position="stack",color="black", fill="goldenrod")
-print(p1)
+p2 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Pupae),fill="green") +
+  ggtitle("Larvae Abundance")+ xlab("Collection Dates")+ylab("Pupae Abundance")+theme_linedraw()
+print(p2)
+
+p3 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=z$"F1 Generation"),fill="purple") + 
+  ggtitle("F1 Abundance")+ xlab("Collection Dates")+ylab("F1 Abundance")+theme_linedraw()
+print(p3)
 
 
-# Trying to get all three columns on one graph
-#Here I think they are stacking within each other? Not working now...
-p1 <- ggplot(data = z,mapping = aes(x=z$dates))+ 
-  geom_bar(mapping = aes(y=z$Larvae),stat = "identity",position="dodge",color="black", fill="goldenrod") 
-print(p1)
+#Using Patchwork to place them vertically and horizontally
+p0+p1+p2+p3+plot_layout(nrow=1)
 
-p1 <- ggplot(data = z,mapping = aes(x=z$ates))+ geom_bar(data=z, y=z$Larvae, color="black")
-print(p1)
+p0+p1+p2+p3+plot_layout(ncol=1)
+
+# And then in two rows 
+(p0 | p1 )/(p2 |p3)
+
+```
+*This looks a little crowded with all the axes
+
+##Trying using a different color palette 
+*Improve legend and colors on this graph.\
+```{r}
+LeuBar2 <- ggplot(LeuData2,aes(x=Dates, y=Abundance,fill=Life_Stage))+geom_bar(position="dodge",stat="identity",color="black")+theme_classic()
+LeuBar2
+
+# Get rid of legend title
+LeuBar2 <- ggplot(LeuData2,aes(x=Dates, y=Abundance,fill=Life_Stage))+ geom_bar(position="dodge",stat="identity",color="black")+guides(fill=guide_legend(title=NULL))+theme_classic()
+LeuBar2
+
+#Trying to fix the legend order. Got it!!
+LeuBar2 <- LeuBar2 + scale_fill_discrete(breaks=c("Parent generation","Larvae","Pupae","F1 Generation"))
+
+LeuBar3 <- LeuBar2+scale_fill_manual(values = wes_palette("GrandBudapest2"))
+LeuBar3
+
+LeuBarDar <- LeuBar3+scale_fill_manual(values = wes_palette("BottleRocket2"))
+LeuBarDar
+?wes_palettes
+
+LeuBarDar <- LeuBar3+scale_fill_manual(values = wes_palette("BottleRocket2"),breaks=c("Parent generation","Larvae","Pupae","F1 Generation"))
+LeuBarDar
+
+# Fixing up the plot format
+LeuBarDar <- LeuBarDar+ ggtitle("Leucopis spp. abundance", subtitle = "New York 2017") +xlab("Collection Dates")+ylab("Leucopis Abundance by life stage")+theme_bw()
+LeuBarDar 
 
 
-#trying to use geom_col instead, take 2
-p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=Larvae))
-print(p1)
+```
 
-p1 <- ggplot(data=z,aes(x=Dates))+geom_col(aes(y=fl))
-print(p1)
+More faceting!
+```{r}
+LeuBarDar+facet_grid(.~Dates)
+LeuBarDar+facet_grid(.~Dates,scales = "free", switch = "x")
 
+LeugraphWSJ <- LeuBarDar+facet_wrap(~Dates,ncol = 1)+theme_wsj()
+LeugraphWSJ
 
-  z2 <- read.table("FY17LeucopisPops_transposed.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
-  
-z2
-# no idea what this is plotting
-p1 <- ggplot(data=z2,aes(x=z2$X5.31))+geom_bar()
-print(p1)
+Leugraphbw <- LeuBarDar+facet_wrap(~Dates,ncol = 1)+theme_bw()+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+Leugraphbw
+
 ```
 

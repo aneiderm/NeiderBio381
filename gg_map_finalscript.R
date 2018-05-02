@@ -67,7 +67,7 @@ VTcountyB <- spTransform(VTcountyB, CRS("+proj=longlat +datum=WGS84"))
 fortify(VTcountyB)
 
 # Plot the shape file on raster object!
-VTcountyMap <- VTMap + geom_polygon(aes(x=long, y=lat, group=group), fill='green', size=.2,color='black', data=VTcountyB, alpha=0.3)
+VTcountyMap <- VTMap + geom_polygon(aes(x=long, y=lat, group=group), fill='purple', size=.2,color='black', data=VTcountyB, alpha=0.5)
 VTcountyMap
 
 # Then you can play with alpha and colors
@@ -89,6 +89,6 @@ GPS_Coords <- read.table("GPS_coords.csv",header = TRUE,sep = ",",stringsAsFacto
 str(GPS_Coords)
 
 # Using geom_point (scatter plots) to plot pts on map
-VTtownMap+geom_point(data=GPS_Coords,mapping=aes(x=Lon,y=Lat),color="purple")
+VTcountyMap+geom_point(data=GPS_Coords,mapping=aes(x=Lon,y=Lat),color="purple")
 
-VTtownMap+geom_point(data=GPS_Coords,mapping=aes(x=Lon,y=Lat),color="red",size=4)
+VTcountyMap+geom_point(data=GPS_Coords,mapping=aes(x=Lon,y=Lat),color="red",size=4)

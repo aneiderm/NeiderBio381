@@ -1,0 +1,324 @@
+#Adriane Wegman
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,eval = FALSE)
+```
+
+## Tired of managing data by hand?
+
+Have you ever spent hours combing over data, copying and pasting, only to import into R and still turn an ERROR? Do you work with data from online resources, externally generated/mantained datasets, dataloggers, analytical instruments, etc...? Do you work with data in text form? Would you like to conduct a reproducable and exhaustive text/web search?
+
+*If you answered yes to any of these, then this lesson is for you!!!*
+
+## Why learn to manipulate text in a computer program?
+
+Humans communicate and organize systems with symbols. Most computer programs are written with simple text. Most computers read like humans do, left to write, top to bottom. *If you can algorithmically manipulate a line of text you can automate just about anything* ... or just free up your work day.
+
+![*Activate your inner Homer Simpson*](homerhardatwork.jpg)
+
+## Why did I choose `stringr`?
+
+After learning about regular expressions (RegEx) early in the semester, I found myself wanting to use them to inside a program to automate data manipulation. After googling regular expressions in R and trying to use base R packages, I got frustrated because there wasn't a any consistent logic behind the function names or call structure. 
+
+Enter `stringr`, a package that is well documented and consistently structured, making it easy use (Table 1). `stringr` (a wrapper around `stringi`) is also a core package of the [Tidyverse](https://www.tidyverse.org/), which means it is scrupulously maintained and compatible with more modern functional programming, such as function `%>%` piping.
+
+*Table 1. Comparison of string manipulators in R*
+
+|      |base R | `stringi` | `stringr`|
+|------|-------|-----------|----------|
+|number of \n functions| ??? | ~240 | ~40 |
+|function \n structure | `???(?,?,?)` | `stri_...(string,args...)`|`str_...(string,args..)`|
+|scope | comprehensive | comprehensive | basic |
+|documentation | google it | `?stri_` | `?str_` |
+
+## Lesson Objective: 
+
+**Use `stringr` and regular expressions (REGEX) to automate text searches and execute computer commands**
+
+## Resources for String Manipulation in R
+
+- [`stringr` on the Tidyverse website](http://stringr.tidyverse.org/articles/stringr.html)
+- [`stringr` cheat sheet](strings.pdf)
+- [`stringr` github page](https://github.com/tidyverse/stringr)
+- [R RegEx cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf)
+- Handling Strings in R by Gaston Sanchez   [ebook](http://www.gastonsanchez.com/r4strings/character-sets.html) [github](https://github.com/gastonstat/r4strings/)
+- R for Data Science by Garrett Grolemund and Hadley Wickham, [Chapter 14: Strings](http://r4ds.had.co.nz/strings.html)
+- [CRAN `stringr` vingette](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html)
+
+
+## Lesson: 
+
+### User Defined Functions
+
+```{r,}
+# I. Define Functions --------------------------------------------
+##################################################################
+# I.1
+# pkg.info() 
+# returns list of info on loaded non-base R packages
+pkg.info <- function() sessionInfo()$otherPkgs
+pkg.info()
+
+##################################################################
+# I.2
+# pkg.names() 
+# returns character vector of load non-base R packages
+pkg.names <- function() names(sessionInfo()$otherPkgs)
+pkg.names()
+
+##################################################################
+# I.3
+# require.pkgs()
+# checks to see if package is installed, then installs and loads 
+require.pkgs <- function(p=c('vector of','packages')){
+ ifelse(!is.element(p,installed.packages()[,1]),
+    sapply(p, install.packages, character.only=T),
+    sapply(p, require, character.only=T))
+}
+require.pkgs()
+
+##################################################################
+# I.4
+# detach.pkgs()
+# detaches all non-base R packages
+detach.pkgs <- function(){
+  . <- menu(c("Yes", "No"),title="Do you want to detach all packages?")
+  if(.!=1){stop('function aborted')}else{
+  lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)
+  }
+}
+detach.pkgs()
+######################################################################
+# I.5
+# find.links()
+# searches for hyperlinks (http...) in character strings
+find.links <- function(x){
+  require('stringr')
+  require('magrittr')
+  str_extract_all(x,"http[^[:space:]]*") %>% unlist()
+}
+
+##################################################################
+# I.6
+# file.remove.warning
+# insert warning requiring user feedback before deleting a vector of files
+file.remove.warning <- function(x=NULL){
+  xfiles <- paste(x,collapse=', ')
+  warning <- paste("WARNING: Do you want to delete",xfiles,"from the following path? \n",getwd())
+  . <- menu(c("Yes", "No"),title=warning)
+  if(.!=1){stop('function aborted')}else{
+    cat("deleting files...")
+    file.remove(x)
+  }
+}
+file.remove.warning()
+
+##################################################################
+# I.7
+# parent.dir()'
+# returns the parent of working directory
+parent.dir <- function(){
+  require('stringr')
+  require('magrittr')
+  x <- getwd()
+  # get names of subdirectories
+  x <- str_split(x,"/") %>% unlist()
+  # get path minus working directory folder 
+  x <- str_c(x[-length(x)],collapse='/')
+  return(x)
+}
+parent.dir()
+```
+
+### Preliminaries
+
+```{r}
+# II. Preliminaries ----------------------------------------------
+set.seed(1) #for repeatable random numbers
+```
+Detach non-base R packages
+```{r}
+pkg.names 
+pkg.names() #I.2
+detach.pkgs 
+detach.pkgs() #I.4
+```
+load a vector of packages 
+```{r}
+require.pkgs 
+require.pkgs(c('stringr','magrittr','openxlsx'))#I.3
+pkg.names()
+```
+
+
+### `stringr` practice
+```{r}
+# III. `stringr` practice ---------------------------
+
+# start by getting some strings to work with 
+
+# vector of package names
+s1 <- pkg.names()
+s1
+# capture.output() of console as character vector 
+pkg.info
+s2 <- capture.output(pkg.info()) #I.1
+s2 
+
+# this list is a little long lets subset a random sample 
+s3 <- sample(s2,5,replace=TRUE)
+s3
+```
+
+TIPS: Every function starts with `str_`. Most functions have logical names. ALWAYS PRINT TO THE CONSOLE FIRST (to test your search). ALWAYS STORE YOUR DATA IN TEMPORARY VARIABLES (don't write over your data).
+
+basic `stringr` commands... 
+```{r}
+str_length 
+```
+note most `stringr` function are a wrapper around `stringi` 
+```{r}
+str_length(s3)
+```
+counts the number of characters matching arg
+```{r}
+str_wrap(s3,1) 
+# wraps inserts '\n' words specified position
+
+str_wrap(s1,1)
+```
+str_wrap only works on strings with multple words
+```{r}
+str_detect(s3,"a")
+```
+returns TRUE if arg in element
+
+```{r}
+str_locate(s3,"a")
+```
+returns positon of argument
+
+```{r}
+str_replace(s3,"a"," (>*_*)> ")
+```
+replaces arg1 with arg2
+
+```{r}
+str_trim(s3)
+```
+trims white space from edges " a " -> "a"
+
+```{r}
+str_split(s3, " ")
+```
+returns a list split by a pattern
+
+```{r}
+str_sub(s1, 1, 3)
+str_sub(s3, 5, -8) # can go backwards
+```
+subsets a string at start and end pos
+
+this one is tricky...
+```{r}
+?str_c #concatonate vector of strings
+str_c(s1,s3, sep=" %>% ")
+str_c(s1, sep=" %>% ") # sep only operates if more than on variable is passed to str_c
+str_c(s1, collapse=" %>% ") # colapses a vector into one string
+# this is similar to paste()
+```
+
+The first argument in a stringr function is always a the string. Because of this `stringr` can be used with function `%>%` pipes `%>%` (loaded from `mgrittr` with `tidyverse`). [Pipes](https://github.com/tidyverse/magrittr) take the output of a function and pass it to the first argument of another, `x %>% f` is equilavent to `f(x)`, `x %>% f(y)` is equivalent to `f(x, y)`. 
+
+using %>% pipes %>%...
+```{r}
+str_trim(s3) %>% 
+  str_split(" ") %>%
+  unlist() %>%
+  str_to_upper()
+```
+
+Now lets see an example of RegEx. I usually need to use the [regex cheetsheat](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf) for help. I use `str_extract` to test regex because it prints the first result to the console.
+
+here I use RegEx to get a list of hyperlinks
+```{r}
+str_extract_all(s2,"http[^[:space:]]*") %>% unlist()
+mylinks <- find.links(s2) #I.5
+```
+
+### Example Application 
+Here I use `stringr` and regex to create files and directories and batch process data manipulation. 
+
+```{r}
+# create tmp folder and set working directory
+tmp<- paste0('tmp',Sys.Date())
+dir.create(tmp)
+setwd(tmp)
+```
+
+write fake files
+```{r}
+# this works in paste but no with str_c
+#f <- str_c(rep('file',10),sample(1:10,replace=T),".tmp")
+f <- paste0(rep('file',10),1:10,".tmp")
+for (i in seq_along(f)) write_file("empty",f[i])
+dir()
+```
+
+read/write excel files with `openxlsx`
+
+run the line below if you have a zipfile error
+```{r}
+#Sys.setenv("R_ZIPCMD" = 'C:/RBuildTools/3.4/bin/zip.exe') 
+```
+[issues with `openxslx`](https://github.com/awalker89/openxlsx/issues/111)
+
+make a list of filenames
+```{r}
+f <- paste0('tmp',1:10,'.xlsx')
+```
+make fake dataset with links
+```{r}
+mydata <- c(str_c("# ",s1),str_c(" 1, ",mylinks,", data "))
+for (i in seq_along(f)) write.xlsx(mydata,f[i],overwrite=TRUE) 
+```
+
+```{r}
+. <- str_extract(dir(),"^tmp.*")
+f <- .[!is.na(.)]
+s <- NULL*length(f) 
+for (i in seq_along(f)){
+  s <- capture.output(read.xlsx(f[i]))
+  cat(i,'doing something with data..')
+  mylinks == findlinks(s2)
+}
+dir()
+```
+
+delete tmp files and warn with console input message before removing files
+```{r}
+file.remove.warning(dir()) #I.6 
+dir()
+```
+
+step out of working directory and delete .tmp files  
+```{r}
+setwd(parent.dir()) #I.7
+getwd()
+```
+
+## Closing Remarks
+
+String manipulation is a powerful skill. If you like being 'closer to your computer' than working with text directly in your programs might be a good option. However, R is not really built for string manipulation, but `stringr` helps. If you can't find the function you want in `stringr` look in `stringi`. Remember alot of the data/text problems you have might already have a package designed for it. So before you reinvent the wheel and write a complicated string manipulation code for running a bibliographic search, look around online for packages or code designed to solve your problem. 
+
+## Extensions for string manipulation 
+
+"Scraping" data from the internet
+[web scraping with R](https://idc9.github.io/stor390/notes/web_scraping/DR_wrangling.html)
+	- (`scholar`)[https://cran.r-project.org/web/packages/scholar/scholar.pdf]
+  - (`rvest`)[https://cran.r-project.org/web/packages/scholar/scholar.pdf]
+
+Find data in an excel file
+  - [Workbook1](stringr_Workbook1.xlsx)
+  - [Workbook2](Workbook2.xlsx)

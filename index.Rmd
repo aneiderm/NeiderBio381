@@ -51,7 +51,8 @@ Creating Batch Files
 * [HW 11:](HW11.html) \
 Function plotting and randomization tests
 
-* [HW 12: ggplot fun!]
+* [HW 12: ggplot fun!](HW12.html)\
+Final versions of summer 2017 Leucopis data
 
 * Files for ggmap presentation \
   [County Boundaries Files](County boundaries copy/CountyBoundaries.zip)\

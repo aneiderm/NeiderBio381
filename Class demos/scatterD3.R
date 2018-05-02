@@ -1,0 +1,5 @@
+library(scatterD3)
+library(ggplot2)
+library(networkD3)
+library(TeachingDemos)
+char2seed("Anya Steinhart, Ph.D")
